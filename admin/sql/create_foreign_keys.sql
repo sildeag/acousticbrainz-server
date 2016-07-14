@@ -108,4 +108,27 @@ ALTER TABLE api_key
 FOREIGN KEY (owner)
 REFERENCES "user" (id);
 
+
+
+-- Metadata tables
+ALTER TABLE metadata.recording_meta
+    ADD CONSTRAINT recording_meta_fk_artist_mbids
+    FOREIGN KEY (artist_mbids)
+  REFERENCES metadata.artist (mbids);
+
+ALTER TABLE metadata.recording_meta
+    ADD CONSTRAINT recording_meta_fk_release_mbid
+    FOREIGN KEY (release_mbid)
+  REFERENCES metadata.release (mbid);
+
+ALTER TABLE metadata.recording_meta
+    ADD CONSTRAINT recording_meta_fk_release_group_mbid
+    FOREIGN KEY (release_group_mbid)
+  REFERENCES metadata.release_group (mbid);
+
+ALTER TABLE metadata.release
+    ADD CONSTRAINT release_fk_artist_mbids
+    FOREIGN KEY (artist_mbids)
+  REFERENCES metadata.artist (mbids);
+
 COMMIT;

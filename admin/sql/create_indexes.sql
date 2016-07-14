@@ -22,4 +22,11 @@ CREATE INDEX highlevel_ndx_highlevel_model ON highlevel_model (highlevel);
 
 CREATE UNIQUE INDEX lower_musicbrainz_id_ndx_user ON "user" (lower(musicbrainz_id));
 
+
+-- Metadata
+CREATE INDEX artist_mbids_ndx_recording_meta ON metadata.recording_meta (artist_mbids);
+CREATE INDEX release_mbid_ndx_recording_meta ON metadata.recording_meta (release_mbid);
+CREATE INDEX release_group_mbid_ndx_recording_meta ON metadata.recording_meta (release_group_mbid);
+CREATE INDEX artist_mbids_ndx_release ON metadata.release (artist_mbids);
+
 COMMIT;

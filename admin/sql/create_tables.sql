@@ -146,4 +146,39 @@ CREATE TABLE api_key (
   created   TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
+-- Metadata tables
+
+CREATE TABLE metadata.recording_meta (
+  recording_mbid     UUID,
+  artist_mbids       TEXT, -- if a recording has more than 1 artist, join them together
+  release_mbid       UUID,
+  releasegroup_mbid  UUID,
+  disc               TEXT,
+  track              TEXT
+);
+
+CREATE TABLE metadata.recording (
+  mbid   UUID,
+  title  UUID
+);
+
+CREATE TABLE metadata.artist (
+  mbids  TEXT,
+  name   TEXT
+);
+
+CREATE TABLE metadata.release (
+  mbid          UUID,
+  title         UUID,
+  artist_mbids  TEXT
+);
+
+CREATE TABLE metadata.releasegroup (
+  mbid   UUID,
+  title  UUID,
+  date   TEXT,
+  discs  TEXT,
+  tracks TEXT
+);
+
 COMMIT;

@@ -20,4 +20,11 @@ ALTER TABLE challenge ADD CONSTRAINT challenge_pkey PRIMARY KEY (id);
 ALTER TABLE dataset_eval_challenge ADD CONSTRAINT dataset_eval_challenge_pkey PRIMARY KEY (dataset_eval_job, challenge_id);
 ALTER TABLE api_key ADD CONSTRAINT api_key_pkey PRIMARY KEY (value);
 
+
+ALTER TABLE metadata.recording_meta ADD CONSTRAINT recording_meta_pkey PRIMARY KEY (recording_mbid);
+ALTER TABLE metadata.recording ADD CONSTRAINT recording_pkey PRIMARY KEY (mbid);
+ALTER TABLE metadata.artist ADD CONSTRAINT artist_pkey PRIMARY KEY (mbids);
+ALTER TABLE metadata.release ADD CONSTRAINT release_pkey PRIMARY KEY (mbid);
+ALTER TABLE metadata.releasegroup ADD CONSTRAINT releasegroup_pkey PRIMARY KEY (mbid);
+
 COMMIT;
