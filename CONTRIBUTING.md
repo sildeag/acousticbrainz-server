@@ -51,6 +51,20 @@ on the MetaBrainz site for information about
  * Documentation
  * Tests
 
+### Testing
+
+To run tests, run
+
+    py.test
+
+You can choose to run a specific test by specifying its name, or the class name, or the test name
+
+    py.test db/test/test_api_key.py
+    py.test db/test/test_api_key.py::APIKeyTestCase::test_generate
+
+You should run tests before you submit a pull request.  Read the python guidelines for more
+information on test layout.
+
 ## Git workflow
 
 We use a git workflow similar to that proposed by github: https://guides.github.com/activities/forking/
