@@ -33,21 +33,21 @@ RUN mkdir /data
 WORKDIR /code
 
 # Gaia
-# See https://github.com/MTG/gaia
-RUN git clone https://github.com/MTG/gaia /tmp/gaia \
+# See https://github.com/sildeag/gaia
+RUN git clone https://github.com/sildeag/gaia /tmp/gaia \
     && cd /tmp/gaia \
-    && ./waf configure --with-python-bindings \
-    && ./waf \
-    && ./waf install \
+    && python3 ./waf configure --with-python-bindings --with-gaia-qt5 \
+    && python3 ./waf \
+    && python3 ./waf install \
     && cd / && rm -r /tmp/gaia
 
 # Essentia
 # See http://essentia.upf.edu/documentation/installing.html
-RUN git clone https://github.com/MTG/essentia /tmp/essentia \
+RUN git clone https://github.com/sildeag/essentia /tmp/essentia \
     && cd /tmp/essentia \
-    && ./waf configure --mode=release --with-gaia --with-example=streaming_extractor_music_svm \
-    && ./waf \
-    && ./waf install \
+    && python3 ./waf configure --mode=release --with-gaia --with-example=streaming_extractor_music_svm \
+    && python3 ./waf \
+    && python3 ./waf install \
     && ldconfig \
     && cp /tmp/essentia/build/src/examples/essentia_streaming_extractor_music_svm /code/hl_extractor/streaming_extractor_music_svm \
     && cd / && rm -r /tmp/essentia
