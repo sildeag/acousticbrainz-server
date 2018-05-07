@@ -1,4 +1,4 @@
-FROM metabrainz/python:3.6
+FROM metabrainz/python:3.5
 
 # Dockerize
 ENV DOCKERIZE_VERSION v0.6.1

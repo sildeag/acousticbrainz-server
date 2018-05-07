@@ -1,4 +1,4 @@
-FROM metabrainz/python:3.6
+FROM metabrainz/python:3.5
 
 # Install Dockerize
 ENV DOCKERIZE_VERSION v0.6.1
@@ -6,11 +6,10 @@ RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSI
     && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
 
 # Installing dependencies
-RUN add-apt-repository ppa:jonathonf/gcc-7.1
-RUN apt-get update
-RUN apt-get install -y gcc-7 g++-7
-
-RUN apt-get update \
+RUN add-apt-repository ppa:jonathonf/gcc-7.1 \
+    && apt-get update \
+    && apt-get install -y gcc-7 g++-7 \
+    && apt-get update \
     && apt-get install -y --no-install-recommends \
                        build-essential \
                        libyaml-dev \
