@@ -1,11 +1,15 @@
-FROM metabrainz/python:2.7
+FROM metabrainz/python:3.6
 
 # Install Dockerize
-ENV DOCKERIZE_VERSION v0.2.0
+ENV DOCKERIZE_VERSION v0.6.1
 RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
     && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
 
 # Installing dependencies
+RUN add-apt-repository ppa:jonathonf/gcc-7.1
+RUN apt-get update
+RUN apt-get install -y gcc-7 g++-7
+
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
                        build-essential \
@@ -64,6 +68,7 @@ RUN mkdir /tmp/models \
 RUN mkdir /code/docs/
 COPY docs/requirements.txt /code/docs/requirements.txt
 COPY requirements.txt /code/requirements.txt
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip3 install --no-cache-dir -r requirements.txt
 
 COPY . /code
+
