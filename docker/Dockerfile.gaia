@@ -8,10 +8,11 @@ RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSI
 # Installing dependencies
 #RUN add-apt-repository ppa:jonathonf/gcc-7.1 \
 #    && apt-get update \
-#    && apt-get install -y gcc-7 g++-7 \
+#    && apt-get install -y gcc-7 g++-7 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
                        build-essential \
+                       vim \
                        libyaml-dev \
                        libfftw3-dev \
                        libavcodec-dev \
@@ -39,17 +40,17 @@ WORKDIR /code
 # See https://github.com/waf-project/waf.git
 RUN git clone https://github.com/waf-project/waf.git /tmp/waf \
     && cd /tmp/waf \
-    && python3 ./waf-light configure -tools=swig,qt5,qt4 build \
-    && cp waf /tmp/gaia/ . \
-    && cp waf /tmp/essentia/ . \ 
+    && python3 ./waf-light configure --tools=swig,qt5,qt4 build \
     && python3 ./waf install \
-    && cd / && rm -r /tmp/waf
+    && cd /
 # Gaia
 # See https://github.com/sildeag/gaia
 RUN git clone https://github.com/sildeag/gaia /tmp/gaia \
     && cd /tmp/gaia \
     && cp /tmp/waf/waf . \
     && python3 ./waf configure --with-python-bindings --with-gaia-qt5 \
+    && vim /tmp/gaia/build/config.log \
+    && python3 ./waf \
     && python3 ./waf install
 
 # Essentia
