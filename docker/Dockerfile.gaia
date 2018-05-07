@@ -6,10 +6,10 @@ RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSI
     && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
 
 # Installing dependencies
-RUN add-apt-repository ppa:jonathonf/gcc-7.1 \
-    && apt-get update \
-    && apt-get install -y gcc-7 g++-7 \
-    && apt-get update \
+#RUN add-apt-repository ppa:jonathonf/gcc-7.1 \
+#    && apt-get update \
+#    && apt-get install -y gcc-7 g++-7 \
+RUN apt-get update \
     && apt-get install -y --no-install-recommends \
                        build-essential \
                        libyaml-dev \
@@ -35,25 +35,36 @@ RUN mkdir /code/hl_extractor
 RUN mkdir /data
 WORKDIR /code
 
+# Waf
+# See https://github.com/waf-project/waf.git
+RUN git clone https://github.com/waf-project/waf.git /tmp/waf \
+    && cd /tmp/waf \
+    && python3 ./waf-light configure -tools=swig,qt5,qt4 build \
+    && cp waf /tmp/gaia/ . \
+    && cp waf /tmp/essentia/ . \ 
+    && python3 ./waf install \
+    && cd / && rm -r /tmp/waf
 # Gaia
 # See https://github.com/sildeag/gaia
 RUN git clone https://github.com/sildeag/gaia /tmp/gaia \
     && cd /tmp/gaia \
+    && cp /tmp/waf/waf . \
     && python3 ./waf configure --with-python-bindings --with-gaia-qt5 \
-    && python3 ./waf \
-    && python3 ./waf install \
-    && cd / && rm -r /tmp/gaia
+    && python3 ./waf install
 
 # Essentia
 # See http://essentia.upf.edu/documentation/installing.html
 RUN git clone https://github.com/sildeag/essentia /tmp/essentia \
     && cd /tmp/essentia \
+    && cp /tmp/waf/waf . \
     && python3 ./waf configure --mode=release --with-gaia --with-example=streaming_extractor_music_svm \
     && python3 ./waf \
     && python3 ./waf install \
     && ldconfig \
     && cp /tmp/essentia/build/src/examples/essentia_streaming_extractor_music_svm /code/hl_extractor/streaming_extractor_music_svm \
-    && cd / && rm -r /tmp/essentia
+    && cd / && rm -r /tmp/essentia 
+
+RUN rm -r /tmp/waf 
 
 # SVM models
 RUN mkdir /tmp/models \
