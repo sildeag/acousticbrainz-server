@@ -1,13 +1,13 @@
-
-
-
-
 FROM phusion/baseimage:latest
 
 # Dockerize
 #ENV DOCKERIZE_VERSION v0.6.1
 #RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
 #    && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
+
+RUN add-apt-repository ppa:jonathonf/gcc-7.1 \
+    && apt-get update \
+    && apt-get install -y gcc-7
 
 # Install dependencies
 # Node
@@ -23,8 +23,8 @@ RUN curl -sL https://deb.nodesource.com/setup_8.x | bash - && apt-get update \
                        libxml2-dev \
                        libxslt1-dev \
                        pxz \
-                       gcc-5 \
                        python3-pip \
+                       python3.5-dev \
                        python3-setuptools \
                        ipython \
                        nodejs \
@@ -38,9 +38,13 @@ RUN mkdir /code/docs/
 COPY docs/requirements.txt /code/docs/requirements.txt
 COPY requirements.txt /code/requirements.txt
 RUN pip3 install --no-cache-dir -r requirements.txt
-
+RUN echo "test1"
 COPY package.json /code
+RUN echo "test2"
 RUN npm install
+RUN echo "test3"
 
 COPY . /code/
+RUN echo "test4"
 CMD python3 manage.py runserver
+RUN echo "test5"

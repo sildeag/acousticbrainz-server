@@ -104,6 +104,7 @@ RUN mkdir /tmp/models \
 RUN mkdir /code/docs/
 COPY docs/requirements.txt /code/docs/requirements.txt
 COPY requirements.txt /code/requirements.txt
+RUN echo "gaia"
 RUN pip3 install --no-cache-dir -r requirements.txt
 
 COPY . /code
