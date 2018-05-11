@@ -1,9 +1,13 @@
-FROM metabrainz/python:3.5
+
+
+
+
+FROM phusion/baseimage:latest
 
 # Dockerize
-ENV DOCKERIZE_VERSION v0.6.1
-RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
-    && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
+#ENV DOCKERIZE_VERSION v0.6.1
+#RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
+#    && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
 
 # Install dependencies
 # Node
@@ -19,6 +23,9 @@ RUN curl -sL https://deb.nodesource.com/setup_8.x | bash - && apt-get update \
                        libxml2-dev \
                        libxslt1-dev \
                        pxz \
+                       gcc-5 \
+                       python3-pip \
+                       python3-setuptools \
                        ipython \
                        nodejs \
     && rm -rf /var/lib/apt/lists/*

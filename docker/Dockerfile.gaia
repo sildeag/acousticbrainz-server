@@ -1,31 +1,32 @@
-FROM metabrainz/python:3.5
+FROM phusion/baseimage:latest
 
 # Install Dockerize
-ENV DOCKERIZE_VERSION v0.6.1
-RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
-    && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
+#ENV DOCKERIZE_VERSION v0.6.1
+#RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
+#    && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
 
 # Installing dependencies
-#RUN add-apt-repository ppa:jonathonf/gcc-7.1 \
-#    && apt-get update \
-#    && apt-get install -y gcc-7 g++-7 
+##RUN add-apt-repository ppa:jonathonf/gcc-7.1 \
+RUN apt-get update \
+    && apt-get install -y qt5-default qtbase5-dev qtchooser qt5-qmake  
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
                        build-essential \
-                       vim \
+                       autotools-dev automake \
                        libyaml-dev \
                        libfftw3-dev \
                        libavcodec-dev \
                        libavformat-dev \
                        libavutil-dev \
                        libavresample-dev \
+                       python3-pip \
                        python3-dev \
                        python3-numpy-dev \
                        python3-numpy \
                        git \
                        libsamplerate0-dev \
                        libtag1-dev \
-                       qt5-default qtbase5-dev doxygen \
+                       doxygen \
                        swig \
                        pkg-config \
                        libpq-dev \
@@ -37,19 +38,42 @@ RUN mkdir /data
 WORKDIR /code
 
 # Waf
-# See https://github.com/waf-project/waf.git
-RUN git clone https://github.com/waf-project/waf.git /tmp/waf \
+# See https://github.com/sildeag/waf.git
+RUN git clone https://github.com/sildeag/waf.git /tmp/waf \
     && cd /tmp/waf \
     && python3 ./waf-light configure --tools=swig,qt5,qt4 build \
     && python3 ./waf install \
     && cd /
+# Swig
+# See https://github.com/swig/swig.git
+RUN git clone https://github.com/swig/swig.git /tmp/swig \
+    && cd /tmp/swig \
+    && ./autogen.sh \
+    && ./configure \
+    && make \
+    && make install \
+    && cd /
+
 # Gaia
+#RUN rm -r /tmp/gaia
 # See https://github.com/sildeag/gaia
+RUN qtchooser -l \
+    && qtchooser=qt5 
+ENV QT_SELECT qt5
+
+ENV CPATH /usr/include/x86_64-linux-gnu/qt5/QtCore:/usr/include/x86_64-linux-gnu/qt5:/usr/include/x86_64-linux-gnu/qt5/QtWidgets:/usr/include/x86_64-linux-gnu/qt5/QtGui:  
+ 
+ENV QTDIR=/usr/lib/x86_64-linux-gnu/qt5
+ENV PATH=$QTDIR/bin:$PATH
+ENV LD_LIBRARY_PATH=$QTDIR/lib:$LD_LIBRARY_PATH
+
 RUN git clone https://github.com/sildeag/gaia /tmp/gaia \
     && cd /tmp/gaia \
     && cp /tmp/waf/waf . \
-    && python3 ./waf configure --with-python-bindings --with-gaia-qt5 \
-    && vim /tmp/gaia/build/config.log \
+    && cp -r /tmp/waf/waflib . \
+    && python3 ./waf configure --with-python-bindings --with-gaia-qt5 \ 
+#--qtbin=/usr/lib/qt5/bin --qtdir=/usr/lib/x86_64-linux-gnu --qtlibs=/usr/lib/x86_64-linux-gnu 
+    && cat /tmp/gaia/build/config.log \
     && python3 ./waf \
     && python3 ./waf install
 
@@ -58,7 +82,8 @@ RUN git clone https://github.com/sildeag/gaia /tmp/gaia \
 RUN git clone https://github.com/sildeag/essentia /tmp/essentia \
     && cd /tmp/essentia \
     && cp /tmp/waf/waf . \
-    && python3 ./waf configure --mode=release --with-gaia --with-example=streaming_extractor_music_svm \
+    && cp -r /tmp/waf/waflib . \ 
+    && python3 ./waf configure --mode=release --with-gaia --with-gaia-qt5 --with-example=streaming_extractor_music_svm \
     && python3 ./waf \
     && python3 ./waf install \
     && ldconfig \
