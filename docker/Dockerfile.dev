@@ -1,50 +1,63 @@
-FROM phusion/baseimage:latest
+FROM ubuntu:latest
 
-# Dockerize
-#ENV DOCKERIZE_VERSION v0.6.1
-#RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
-#    && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
+ENV LANG="en_US.UTF-8"
+ENV LC_ALL="en_US.UTF-8"
+ENV DEBIAN_FRONTEND noninteractive
+ENV PKG_CONFIG_PATH=$PKG_CONFIG_PATH:"/usr/local/config"
 
-RUN add-apt-repository ppa:jonathonf/gcc-7.1 \
-    && apt-get update \
-    && apt-get install -y gcc-7
 
-# Install dependencies
-# Node
-RUN curl -sL https://deb.nodesource.com/setup_8.x | bash - && apt-get update \
-    && apt-get install -y --no-install-recommends \
-                       build-essential \
+# Be sure to install any runtime dependencies - apt-get clean not required for ubuntu image
+
+RUN apt-get clean && apt-get update && apt-get install -y --no-install-recommends \
+                       language-pack-en \
                        ca-certificates \
-                       cron \
+                       qt5-default qtbase5-dev qtchooser qt5-qmake \  
+                       build-essential apt-utils \
+                       autotools-dev automake autoconf libtool-bin python3-setuptools python3-distutils cmake \
+                       python3-dev \
+                       python3.6-dev \
+                       wget curl \
                        git \
-                       libpq-dev \
+                       swig \
+                       doxygen \
+                       libfftw3-dev libass-dev libfreetype6-dev \
+  		       libsdl1.2-dev libtheora-dev libva-dev libvdpau-dev libvorbis-dev libxcb1-dev libxcb-shm0-dev \
+  		       libxcb-xfixes0-dev texinfo zlib1g-dev yasm libfdk-aac-dev libmp3lame-dev libopus-dev \
+                       libsamplerate0-dev libtag1-dev libavcodec-dev libavformat-dev libavresample-dev \
+                       pkg-config \
+		       libpq-dev \
                        libffi-dev \
                        libssl-dev \
                        libxml2-dev \
                        libxslt1-dev \
+                       gcc-7 \
                        pxz \
                        python3-pip \
-                       python3.5-dev \
+                       python3-dev \
+                       python3.6-dev \
                        python3-setuptools \
-                       ipython \
-                       nodejs \
-    && rm -rf /var/lib/apt/lists/*
+                       jupyter-notebook jupyter-core python3-ipykernel  \
+                       npm \
+                       nodejs \                    
+                   && rm -rf /var/lib/apt/lists/*
+
+#RUN curl -sL https://deb.nodesource.com/setup_8.x | bash - 
 
 RUN mkdir /code
 WORKDIR /code
 
-# Python dependencies
+# Python3 dependencies
 RUN mkdir /code/docs/
 COPY docs/requirements.txt /code/docs/requirements.txt
 COPY requirements.txt /code/requirements.txt
 RUN pip3 install --no-cache-dir -r requirements.txt
-RUN echo "test1"
+#RUN echo "test1"
 COPY package.json /code
-RUN echo "test2"
+#RUN echo "test2"
 RUN npm install
-RUN echo "test3"
+#RUN echo "test3"
 
 COPY . /code/
-RUN echo "test4"
-CMD python3 manage.py runserver
-RUN echo "test5"
+#RUN echo "test4"
+CMD python manage.py runserver
+#RUN echo "test5"
