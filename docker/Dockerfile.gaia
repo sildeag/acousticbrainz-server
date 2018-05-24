@@ -57,7 +57,7 @@ ENV QT_SELECT=qt5
 #ENV QTDIR=/usr/lib/x86_64-linux-gnu/qt5
 #ENV PATH=$QTDIR/bin:$PATH
 #ENV LD_LIBRARY_PATH=$QTDIR/lib:$LD_LIBRARY_PATH
-#ENV LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/local/lib"
+ENV LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/local/lib:/tmp/essentia/build/src"
 
 RUN git clone https://github.com/sildeag/gaia /tmp/gaia    \
     && cd /tmp/gaia \
@@ -76,8 +76,8 @@ RUN git clone https://github.com/sildeag/essentia /tmp/essentia \
     && python3 ./waf configure --mode=release --with-gaia --with-gaia-qt5 --with-example=streaming_extractor_music_svm \
     && python3 ./waf \
     && python3 ./waf install \
-    && ldconfig \
-    && cp /tmp/essentia/src/examples/essentia_streaming_extractor_music_svm /code/hl_extractor/streaming_extractor_music_svm \
+#    && ldconfig \
+    && cp /tmp/essentia/build/src/examples/essentia_streaming_extractor_music_svm /code/hl_extractor/streaming_extractor_music_svm \
     && cd / \ 
     && rm -r /tmp/essentia
 
